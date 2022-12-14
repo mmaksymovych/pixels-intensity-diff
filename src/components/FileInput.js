@@ -1,4 +1,20 @@
 import { Box } from "@mui/material";
+import { height, width } from "../constants";
+
+const onLoadImageEnd = (id) => (e) => {
+  var image = new Image();
+  image.src = e.target.result;
+  image.onload = function () {
+    var canvas = document.getElementById(id);
+
+    canvas.width = width;
+    canvas.height = height;
+
+    var ctx = canvas.getContext("2d");
+
+    ctx.drawImage(image, 0, 0, width, height);
+  };
+};
 
 export const Input = ({ id }) => (
   <Box display="flex" flexDirection="column">
@@ -10,28 +26,7 @@ export const Input = ({ id }) => (
 
         var reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onloadend = function (e) {
-          console.log("res", e.target.result);
-
-          var image = new Image();
-          image.src = e.target.result;
-          image.onload = function (ev) {
-            var canvas = document.getElementById(id);
-            canvas.width = w;
-
-            const percent = canvas.width / image.width;
-
-            console.log("p", percent);
-
-            // const height = image.height * percent;
-            const height = h;
-
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-
-            ctx.drawImage(image, 0, 0, w, h);
-          };
-        };
+        reader.onloadend = onLoadImageEnd(id);
       }}
     />
     <canvas id={id} />
