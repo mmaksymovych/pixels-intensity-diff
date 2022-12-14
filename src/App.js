@@ -5,54 +5,34 @@ import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import { styled } from "@mui/material/styles";
-import Paper from "@mui/material/Paper";
-import { Input } from "./components";
-import { processImages } from "./utils.js";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+import { Input, Item } from "./components";
+import { processImages } from "./utils.js";
+import { Typography } from "@mui/material";
 
 const drawerWidth = 240;
-const navItems = [];
 
 function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [deviation, setDeviation] = React.useState("");
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const onClickProcessImage = () => {
+    const deviation = processImages();
+    setDeviation(deviation);
+  };
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        Pixels intensity diff
-      </Typography>
       <Divider />
-      <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
     </Box>
   );
 
@@ -72,20 +52,24 @@ function DrawerAppBar(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
+
+          <Button
+            variant="contained"
+            color="success"
+            onClick={onClickProcessImage}
           >
-            Pixels intensity diff
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button key={item} sx={{ color: "#fff" }}>
-                {item}
-              </Button>
-            ))}
-          </Box>
+            Process
+          </Button>
+          {deviation && (
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1 }}
+              ml={4}
+            >
+              Відхилення - {deviation}
+            </Typography>
+          )}
         </Toolbar>
       </AppBar>
       <Box component="nav">
@@ -120,9 +104,6 @@ function DrawerAppBar(props) {
           <Grid item xs={12}>
             <Item>
               <Box display="flex" flexDirection="column">
-                <Button variant="contained" onClick={processImages}>
-                  Process
-                </Button>
                 <canvas id="result"></canvas>
               </Box>
             </Item>

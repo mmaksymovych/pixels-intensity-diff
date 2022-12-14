@@ -48,7 +48,9 @@ export const processImages = () => {
     data3.data[i + 2] = pxchanged ? 0 : 0;
   }
 
-  console.log("standard deviation: %s", stats.stdev(diffs));
+  const deviation = stats.stdev(diffs).toFixed(2);
 
   ctx.putImageData(data3, 0, 0);
+
+  return deviation;
 };
