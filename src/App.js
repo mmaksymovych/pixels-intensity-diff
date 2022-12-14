@@ -16,6 +16,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
+import { Input } from "./components";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,48 +27,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const drawerWidth = 240;
-const navItems = ["Home", "About", "Contact"];
+const navItems = [];
 
 const w = 1000;
 const h = 800;
-
-const Input = ({ id }) => (
-  <Box display="flex" flexDirection="column">
-    <input
-      type="file"
-      name="myImage"
-      onChange={async (event) => {
-        var file = event.target.files[0];
-
-        var reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = function (e) {
-          console.log("res", e.target.result);
-
-          var image = new Image();
-          image.src = e.target.result;
-          image.onload = function (ev) {
-            var canvas = document.getElementById(id);
-            canvas.width = w;
-
-            const percent = canvas.width / image.width;
-
-            console.log("p", percent);
-
-            // const height = image.height * percent;
-            const height = h;
-
-            canvas.height = height;
-            var ctx = canvas.getContext("2d");
-
-            ctx.drawImage(image, 0, 0, w, h);
-          };
-        };
-      }}
-    />
-    <canvas id={id} />
-  </Box>
-);
 
 function DrawerAppBar(props) {
   const { window } = props;
