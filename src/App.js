@@ -20,6 +20,8 @@ function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [deviation, setDeviation] = React.useState("");
+  const [img1Ready, setImg1Ready] = React.useState(false);
+  const [img2Ready, setImg2Ready] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -53,13 +55,16 @@ function DrawerAppBar(props) {
             <MenuIcon />
           </IconButton>
 
-          <Button
-            variant="contained"
-            color="success"
-            onClick={onClickProcessImage}
-          >
-            Process
-          </Button>
+          {img1Ready && img2Ready && (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={onClickProcessImage}
+            >
+              Process
+            </Button>
+          )}
+
           {deviation && (
             <Typography
               variant="h6"
@@ -96,10 +101,10 @@ function DrawerAppBar(props) {
       <Box sx={{ width: "100%" }} mt={10} px={5}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           <Grid item xs={6}>
-            <Input id="1" />
+            <Input id="1" onSuccess={() => setImg1Ready(true)} />
           </Grid>
           <Grid item xs={6}>
-            <Input id="2" />
+            <Input id="2" onSuccess={() => setImg2Ready(true)} />
           </Grid>
           <Grid item xs={12}>
             <Item>

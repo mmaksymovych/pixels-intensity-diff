@@ -16,17 +16,20 @@ const onLoadImageEnd = (id) => (e) => {
   };
 };
 
-export const Input = ({ id }) => (
+export const Input = ({ id, onSuccess }) => (
   <Box display="flex" flexDirection="column">
     <input
       type="file"
       name="myImage"
+      accept="image/*"
+      required
       onChange={async (event) => {
         var file = event.target.files[0];
 
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = onLoadImageEnd(id);
+        onSuccess();
       }}
     />
     <canvas id={id} />
