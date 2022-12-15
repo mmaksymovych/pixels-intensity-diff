@@ -3,6 +3,8 @@
 1. Visit https://mmaksymovych.github.io/pixels-intensity-diff
 2. Follow gif instruction below ↓
 
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
