@@ -1,3 +1,8 @@
+# Pixels intensity diff
+
+1. Visit https://mmaksymovych.github.io/pixels-intensity-diff
+2. Follow gif instruction below ↓
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -8,7 +13,7 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in the development mode.\z
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\

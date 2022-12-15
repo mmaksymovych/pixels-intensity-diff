@@ -13,6 +13,7 @@ import Grid from "@mui/material/Grid";
 import { Input, Item } from "./components";
 import { processImages } from "./utils.js";
 import { Typography } from "@mui/material";
+import { height } from "./constants";
 
 const drawerWidth = 240;
 
@@ -100,16 +101,17 @@ function DrawerAppBar(props) {
 
       <Box sx={{ width: "100%" }} mt={10} px={5}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <Input id="1" onSuccess={() => setImg1Ready(true)} />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <Input id="2" onSuccess={() => setImg2Ready(true)} />
           </Grid>
-          <Grid item xs={12}>
-            <Item>
+          <Grid item xs={4}>
+            <Typography>Найбільше відхилення інтенсивності ↓</Typography>
+            <Item mt={2}>
               <Box display="flex" flexDirection="column">
-                <canvas id="result"></canvas>
+                <canvas id="result" height="220"></canvas>
               </Box>
             </Item>
           </Grid>
