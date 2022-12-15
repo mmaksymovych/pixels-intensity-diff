@@ -1,7 +1,14 @@
 # Pixels intensity diff
 
 1. Visit https://mmaksymovych.github.io/pixels-intensity-diff
-2. Follow gif instruction below ↓
+2. Follow gif instruction below
+3. Choose first image
+4. Choose seconds image
+5. Click "Process" in the header
+6. Find dispersion value in the header
+7. Find pixels diff on the 3rd image which is result of processing
+
+
 
 # Getting Started with Create React App
 
