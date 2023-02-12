@@ -16,22 +16,36 @@ const onLoadImageEnd = (id) => (e) => {
   };
 };
 
-export const Input = ({ id, onSuccess }) => (
+export const Input = ({ id, onSuccess, imageReady }) => (
   <Box display="flex" flexDirection="column">
+    <label htmlFor={`file=${id}`} className="custom-file-upload">
+      <i className="fa fa-cloud-upload"></i> Завантажити зображення {id}
+    </label>
     <input
+      id={`file=${id}`}
+      className="custom-file-upload"
       type="file"
       name="myImage"
       accept="image/*"
       required
       onChange={async (event) => {
+        onSuccess();
         var file = event.target.files[0];
 
         var reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = onLoadImageEnd(id);
-        onSuccess();
       }}
     />
-    <canvas id={id} />
-  </Box>
+    {
+      imageReady ? (
+        <canvas id={id} />
+      ) : (
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png"/>
+
+      )
+    }
+
+
+    </Box>
 );

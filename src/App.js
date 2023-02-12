@@ -1,35 +1,41 @@
-import * as React from "react";
+import * as React from 'react';
 import PropTypes from "prop-types";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-
-import { Input, Item } from "./components";
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 import { processImages } from "./utils.js";
-import { Typography } from "@mui/material";
-import { height } from "./constants";
+import {FormControlLabel, Slider, Switch, TextField} from "@mui/material";
+import Button from '@mui/material/Button';
+import {Input} from "./components";
+import { saveAs } from 'file-saver';
+import './App.css'
 
 const drawerWidth = 240;
 
 function DrawerAppBar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [deviation, setDeviation] = React.useState("");
+  const [deviation, setDeviation] = React.useState({});
   const [img1Ready, setImg1Ready] = React.useState(false);
   const [img2Ready, setImg2Ready] = React.useState(false);
+  const [ useBlackBg, setUseBlackBg ] = React.useState(false);
+  const [ useAbsolute, setUseAbsolute ] = React.useState(false);
+
+
+  const [ threadHold, setThreadHold ] = React.useState(10)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const onClickProcessImage = () => {
-    const deviation = processImages();
+    const deviation = processImages(useBlackBg, threadHold);
     setDeviation(deviation);
   };
 
@@ -43,79 +49,120 @@ function DrawerAppBar(props) {
     window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <AppBar component="nav">
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          {img1Ready && img2Ready && (
-            <Button
-              variant="contained"
-              color="success"
-              onClick={onClickProcessImage}
-            >
-              Process
-            </Button>
-          )}
-
-          {deviation && (
-            <Typography
-              variant="h6"
-              component="div"
-              sx={{ flexGrow: 1 }}
-              ml={4}
-            >
-              Відхилення - {deviation}
-            </Typography>
-          )}
+          <Typography variant="h6" noWrap component="div">
+            Permanent drawer
+          </Typography>
         </Toolbar>
       </AppBar>
-      <Box component="nav">
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
-          }}
-          sx={{
-            display: { xs: "block", sm: "none" },
-            "& .MuiDrawer-paper": {
-              boxSizing: "border-box",
-              width: drawerWidth,
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </Box>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar />
+        <Divider />
+        <List>
+          <Box px={2}>
+            <Typography id="input-slider" gutterBottom>
+              Threshold:
+            </Typography>
+            <Slider
+              aria-label="Threshold"
+              defaultValue={threadHold}
+              getAriaValueText={(value) => value}
+              valueLabelDisplay="auto"
+              step={5}
+              marks
+              min={5}
+              max={50}
+              onChange={(event, newValue) => {
+                setThreadHold(newValue);
+              }}
+            />
+            <FormControlLabel control={<Switch checked={useBlackBg} onChange={(event) => {
+              setUseBlackBg(event.target.checked);
+            }} />} label="Чорний фон" />
+            <Box mt={1}>
+              <Button variant="outlined" fullWidth disabled={!img1Ready && !img2Ready} onClick={onClickProcessImage}>Опрацювати</Button>
+            </Box>
+            <Box my={2}>
+              <Divider />
+            </Box>
+            <FormControlLabel control={<Switch checked={useAbsolute} onChange={(event) => {
+              setUseAbsolute(event.target.checked);
+            }} />} label="Відносні значення" />
+            <Box mt={2}/>
+            <Typography id="input-slider" gutterBottom>
+              <b>Результат:</b>
+            </Typography>
+            <Typography id="input-slider" gutterBottom>
+              Відхилення R:  {useAbsolute ? `${deviation.deviationR || 0}%` : `${deviation.deviationRAbs || 0}px`}
+            </Typography>
+            <Typography id="input-slider" gutterBottom>
+              Відхилення G: {useAbsolute ? `${deviation.deviationG || 0}%` : `${deviation.deviationGAbs || 0}px`}
+            </Typography>
+            <Typography id="input-slider" gutterBottom>
+              Відхилення B: {useAbsolute ? `${deviation.deviationB || 0}%` : `${deviation.deviationBAbs || 0}px`}
+            </Typography>
+            <Typography id="input-slider" gutterBottom>
+              Сумарне відхилення: {useAbsolute ? `${deviation.res || 0}%` : `${deviation.resAbs || 0}px`}
+            </Typography>
+            <Box my={2}>
+              <Divider />
+            </Box>
+            <Box mt={1}>
+              <Button variant="outlined" fullWidth disabled={!img1Ready && !img2Ready} onClick={() => {
+                var canvas = document.getElementById("result");
+                canvas.toBlob(function(blob) {
+                  saveAs(blob, "pretty image.png");
+                });
 
-      <Box sx={{ width: "100%" }} mt={10} px={5}>
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid item xs={4}>
-            <Input id="1" onSuccess={() => setImg1Ready(true)} />
-          </Grid>
-          <Grid item xs={4}>
-            <Input id="2" onSuccess={() => setImg2Ready(true)} />
-          </Grid>
-          <Grid item xs={4}>
-            <Typography>Найбільше відхилення інтенсивності ↓</Typography>
-            <Item mt={2}>
-              <Box display="flex" flexDirection="column">
-                <canvas id="result" height="220"></canvas>
-              </Box>
-            </Item>
-          </Grid>
-        </Grid>
+              }}>Зберегти результат</Button>
+            </Box>
+          </Box>
+
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+      >
+             <Box sx={{ width: "100%", maxWidth: 1024 }} mt={10} px={5}>
+               <Typography><b>Завдання:</b></Typography>
+               <Typography style={{fontStyle: 'italic'}}>
+                 Для двох однакових зображень обчислити середнє квадратичне відхилення інтенсивності пікселів. Вказати місця найбільшого відхилення Порівняти картинки різних форматів.
+               </Typography><br/>
+               <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                 <Grid item xs={6}>
+                   <Input id="1" onSuccess={() => setImg1Ready(true)} imageReady={img1Ready}/>
+                 </Grid>
+                 <Grid item xs={6}>
+                   <Input id="2" onSuccess={() => setImg2Ready(true)} imageReady={img2Ready}/>
+                 </Grid>
+                 <Grid item xs={2}></Grid>
+                 <Grid item xs={8}>
+
+                   <Box display="flex" flexDirection="column">
+                     <canvas id="result" height="220"></canvas>
+                   </Box>
+                 </Grid>
+               </Grid>
+             </Box>
+
       </Box>
     </Box>
   );

@@ -1,7 +1,7 @@
 import { width, height } from "../constants";
 var stats = require("stats-lite");
 
-export const processImages = () => {
+export const processImages = (useBlackBg = false, threadHold=10) => {
   const canvas1 = document.getElementById("1");
   const canvas2 = document.getElementById("2");
 
@@ -21,7 +21,9 @@ export const processImages = () => {
   ctx.fill();
   const data3 = ctx.getImageData(0, 0, width, height);
 
-  const diffs = [];
+  const diffsR = [];
+  const diffsG = [];
+  const diffsB = [];
 
   for (var i = 0; i < data1.data.length; i += 4) {
     var ir = data1.data[i];
@@ -36,21 +38,44 @@ export const processImages = () => {
     const diffg = Math.abs(ig - fg);
     const diffb = Math.abs(ib - fb);
 
-    diffs.push(diffr, diffg, diffb);
+    diffsR.push(diffr);
+    diffsG.push(diffg);
+    diffsB.push(diffb);
 
-    const dr = diffr > 10 ? fr : 0;
-    const dg = diffg > 10 ? fg : 0;
-    const db = diffb > 10 ? fb : 0;
+    const dr = diffr > threadHold ? fr : 0;
+    const dg = diffg > threadHold ? fg : 0;
+    const db = diffb > threadHold ? fb : 0;
 
     const pxchanged = dr > 0 && dg > 0 && db > 0;
-    data3.data[i] = pxchanged ? 255 : 0;
-    data3.data[i + 1] = pxchanged ? 0 : 0;
-    data3.data[i + 2] = pxchanged ? 0 : 0;
+    data3.data[i] = pxchanged ? 255 : !useBlackBg && data1.data[i] || 0;
+    data3.data[i + 1] = pxchanged ? 0 : !useBlackBg && data1.data[i + 1] || 0;
+    data3.data[i + 2] = pxchanged ? 0 : !useBlackBg &&  data1.data[i + 2] || 0;
   }
 
-  const deviation = stats.stdev(diffs).toFixed(2);
+
+  const deviationRAbs = parseInt(stats.stdev(diffsR));
+  const deviationGAbs = parseInt(stats.stdev(diffsG));
+  const deviationBAbs = parseInt(stats.stdev(diffsB));
+  const resAbs = parseInt((deviationRAbs + deviationGAbs + deviationBAbs) / 3)
+
+  const calcPercentageDeviation = (value) => value * 100 / 255
+
+  console.log(deviationRAbs)
+  console.log(deviationGAbs)
+  console.log(deviationBAbs)
+  console.log('resAbs', resAbs)
+
+  const deviationR = parseInt(calcPercentageDeviation(deviationRAbs))
+  const deviationG = parseInt(calcPercentageDeviation(deviationGAbs))
+  const deviationB = parseInt(calcPercentageDeviation(deviationBAbs))
+  const res = parseInt((deviationR + deviationG + deviationB) / 3)
+
+  console.log(deviationR)
+  console.log(deviationG)
+  console.log(deviationB)
+  console.log('res', res)
 
   ctx.putImageData(data3, 0, 0);
 
-  return deviation;
+  return { deviationRAbs, deviationGAbs, deviationBAbs, resAbs, deviationR, deviationG, deviationB, res };
 };
