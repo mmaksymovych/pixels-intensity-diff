@@ -38,15 +38,18 @@ export const processImages = (useBlackBg = false, threadHold=10) => {
     const diffg = Math.abs(ig - fg);
     const diffb = Math.abs(ib - fb);
 
-    diffsR.push(diffr);
-    diffsG.push(diffg);
-    diffsB.push(diffb);
-
     const dr = diffr > threadHold ? fr : 0;
     const dg = diffg > threadHold ? fg : 0;
     const db = diffb > threadHold ? fb : 0;
 
     const pxchanged = dr > 0 && dg > 0 && db > 0;
+
+    if(pxchanged) {
+      diffsR.push(diffr);
+      diffsG.push(diffg);
+      diffsB.push(diffb);
+    }
+
     data3.data[i] = pxchanged ? 255 : !useBlackBg && data1.data[i] || 0;
     data3.data[i + 1] = pxchanged ? 0 : !useBlackBg && data1.data[i + 1] || 0;
     data3.data[i + 2] = pxchanged ? 0 : !useBlackBg &&  data1.data[i + 2] || 0;
