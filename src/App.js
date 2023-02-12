@@ -57,7 +57,7 @@ function DrawerAppBar(props) {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            Permanent drawer
+            Середнє квадратичне відхилення інтенсивності пікселів
           </Typography>
         </Toolbar>
       </AppBar>
@@ -97,7 +97,7 @@ function DrawerAppBar(props) {
               setUseBlackBg(event.target.checked);
             }} />} label="Чорний фон" />
             <Box mt={1}>
-              <Button variant="outlined" fullWidth disabled={!img1Ready && !img2Ready} onClick={onClickProcessImage}>Опрацювати</Button>
+              <Button variant="outlined" fullWidth disabled={!img1Ready || !img2Ready} onClick={onClickProcessImage}>Опрацювати</Button>
             </Box>
             <Box my={2}>
               <Divider />
@@ -125,7 +125,7 @@ function DrawerAppBar(props) {
               <Divider />
             </Box>
             <Box mt={1}>
-              <Button variant="outlined" fullWidth disabled={!img1Ready && !img2Ready} onClick={() => {
+              <Button variant="outlined" fullWidth disabled={!deviation.res} onClick={() => {
                 var canvas = document.getElementById("result");
                 canvas.toBlob(function(blob) {
                   saveAs(blob, "pretty image.png");
