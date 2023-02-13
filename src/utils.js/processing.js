@@ -1,7 +1,7 @@
 import { width, height } from "../constants";
 var stats = require("stats-lite");
 
-export const processImages = (useBlackBg = false, threadHold=10) => {
+export const processImages = (template='left', threadHold=10) => {
   const canvas1 = document.getElementById("1");
   const canvas2 = document.getElementById("2");
 
@@ -50,9 +50,11 @@ export const processImages = (useBlackBg = false, threadHold=10) => {
       diffsB.push(diffb);
     }
 
-    data3.data[i] = pxchanged ? 255 : !useBlackBg && data1.data[i] || 0;
-    data3.data[i + 1] = pxchanged ? 0 : !useBlackBg && data1.data[i + 1] || 0;
-    data3.data[i + 2] = pxchanged ? 0 : !useBlackBg &&  data1.data[i + 2] || 0;
+    const image = template === 'left' ? data1 : template === 'right' ? data2 : undefined
+
+    data3.data[i] = pxchanged ? 255 : image ? image.data[i] : 0;
+    data3.data[i + 1] = pxchanged ? 0 : image ? image.data[i + 1] : 0;
+    data3.data[i + 2] = pxchanged ? 0 : image ? image.data[i + 2] : 0;
   }
 
 

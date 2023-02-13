@@ -9,6 +9,8 @@ import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { processImages } from "./utils.js";
 import {FormControlLabel, Slider, Switch, TextField} from "@mui/material";
 import Button from '@mui/material/Button';
@@ -19,13 +21,12 @@ import './App.css'
 const drawerWidth = 240;
 
 function DrawerAppBar(props) {
-  const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [deviation, setDeviation] = React.useState({});
   const [img1Ready, setImg1Ready] = React.useState(false);
   const [img2Ready, setImg2Ready] = React.useState(false);
-  const [ useBlackBg, setUseBlackBg ] = React.useState(false);
   const [ useAbsolute, setUseAbsolute ] = React.useState(false);
+  const [ template, setUseTemplate ] = React.useState('left');
 
 
   const [ threadHold, setThreadHold ] = React.useState(10)
@@ -35,7 +36,7 @@ function DrawerAppBar(props) {
   };
 
   const onClickProcessImage = () => {
-    const deviation = processImages(useBlackBg, threadHold);
+    const deviation = processImages(template, threadHold);
     setDeviation(deviation);
   };
 
@@ -44,9 +45,6 @@ function DrawerAppBar(props) {
       <Divider />
     </Box>
   );
-
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -93,9 +91,27 @@ function DrawerAppBar(props) {
                 setThreadHold(newValue);
               }}
             />
-            <FormControlLabel control={<Switch checked={useBlackBg} onChange={(event) => {
-              setUseBlackBg(event.target.checked);
-            }} />} label="Чорний фон" />
+
+            <Box my={2} mb={3}>
+              <Typography id="input-slider" gutterBottom>
+                Фонове зображення:
+              </Typography>
+
+              <ToggleButtonGroup
+                color="primary"
+                value={template}
+                exclusive
+                onChange={(event, newAlignment) => {
+                  setUseTemplate(newAlignment);
+                }}
+                aria-label="Platform"
+              >
+                <ToggleButton value="left">Ліве</ToggleButton>
+                <ToggleButton value="right">Праве</ToggleButton>
+                <ToggleButton value="black">Чорний</ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+
             <Box mt={1}>
               <Button variant="outlined" fullWidth disabled={!img1Ready || !img2Ready} onClick={onClickProcessImage}>Опрацювати</Button>
             </Box>
