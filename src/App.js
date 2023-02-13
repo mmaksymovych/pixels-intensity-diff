@@ -54,9 +54,6 @@ function DrawerAppBar(props) {
         sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
       >
         <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Середнє квадратичне відхилення інтенсивності пікселів
-          </Typography>
         </Toolbar>
       </AppBar>
       <Drawer
